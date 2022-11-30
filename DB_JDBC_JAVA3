@@ -1,0 +1,118 @@
+CREATE DATABASE ASM_2
+GO
+USE ASM_2
+GO
+SELECT Username , Password , Role FROM ACCOUNT 
+CREATE TABLE ACCOUNT(
+    Username VARCHAR(50) NOT NULL PRIMARY KEY,
+    Password VARCHAR(100),
+    Role INT
+)
+SELECT CategoryId , CategoryName FROM CATEGORY
+CREATE TABLE CATEGORY(
+    Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    CategoryName NVARCHAR(50)
+)
+SELECT ProductId , CategoryId , ProductName , Gia , SoLuong , KichThuoc , XuatSu , KhaDung FROM GHE WHERE CategoryId = ?
+CREATE TABLE GHE(
+    ProductId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    CategoryId INT FOREIGN KEY REFERENCES CATEGORY(Id),
+    ProductName NVARCHAR(50),
+    Gia DECIMAL,
+    SoLuong int,
+    KichThuoc int,
+    XuatSu NVARCHAR(100),
+    KhaDung BIT
+)
+
+CREATE TABLE INVENTORYLOG(
+    InventoryLogId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    ProductId INT FOREIGN KEY REFERENCES GHE(ProductId),
+    IEDate DATE,
+    SoLuongNhap INT,
+    SoLuongXuat INT,
+    SoLuongTon INT
+)
+
+
+SELECT ProductName FROM GHE WHERE CategoryId = 1
+SELECT SoLuong From GHE
+SELECT * FROM GHE WHERE CategoryId = 1
+SELECT * FROM GHE
+SELECT * FROM INVENTORYLOG
+SELECT * FROM CATEGORY
+delete from CATEGORY where  CategoryName = 'Ghe Pho Thong'
+SELECT INVENTORYLOG.ProductId , IEDate , SUM(SoLuongNhap) AS 'SoLuongNhap' , SUM(SoLuongXuat) AS 'SoLuongXuat' , @SoLuongTon AS 'SoLuongTon' FROM INVENTORYLOG
+DELETE FROM GHE
+DELETE FROM CATEGORY
+DELETE FROM INVENTORYLOG WHERE InventoryLogId  = 16
+INSERT INTO GHE VALUES(2,'Ghế ngồi ', 5000, 10, 5, 'Việt Nam')
+INSERT INTO CATEGORY VALUES ('Ghế Du Lịch')
+INSERT INTO ACCOUNT VALUES ('QuanLy' , 'e10adc3949ba59abbe56e057f20f883e' , 0)
+INSERT INTO ACCOUNT VALUES ('ThuKho', 'e10adc3949ba59abbe56e057f20f883e' ,1)
+INSERT INTO INVENTORYLOG VALUES (3,'28-01-2022', 50 , 0 , 250)
+
+
+SELECT ProductId , CategoryId , ProductName , Gia , SoLuong , KichThuoc , XuatSu , KhaDung FROM GHE WHERE ProductName LIKE ? AND KhaDung = 1
+
+
+SELECT Username , Password , Role FROM ACCOUNT
+delete from GHE
+Insert into GHE values (2,N'Ghế Song Long' , 200000,99,60,'USQ',1)
+Select * from GHE
+
+
+
+Select * from ACCOUNT
+
+Insert into CATEGORY VALUES ('Ghe Pho Thong')
+
+Declare @soLuongTon int = (Select top 1 SoLuongTon from INVENTORYLOG where IEDate = '08-06-2022' and INVENTORYLOG.ProductId = 3 Order by InventoryLogId desc)
+                Select INVENTORYLOG.ProductId , IEDate, SUM(SoLuongNhap) as 'soLuongNhap' , SUM(SoLuongXuat) as 'soLuongXuat' , @soLuongTon as 'soLuongTon' from INVENTORYLOG
+                join GHE on GHE.ProductId = INVENTORYLOG.ProductId
+                where IEDate = '08-06-2022' and INVENTORYLOG.ProductId = 3
+                Group by INVENTORYLOG.ProductId,IEDate
+
+
+                Delete from CATEGORY where Id = 3
+
+                Select * from CATEGORY
+
+
+                select * from INVENTORYLOG
+
+Select * from INVENTORYLOG
+Select Ghe.ProductId , IEDate , SUM(SoLuongXuat) as 'soLuongXuat' , SUM(SoLuongXuat * Gia) as 'doanhThu' from INVENTORYLOG
+join GHE on GHE.ProductId = INVENTORYLOG.ProductId
+where MONTH(IEDate) = MONTH(Getdate()) and soLuongXuat > 0
+GROUP by Ghe.ProductId , IEDate
+ORDER by soLuongXuat asc
+Delete from GHE where ProductId = 4
+Update INVENTORYLOG SET IEDate  ='05-09-2022' where InventoryLogId = 32
+
+Select INVENTORYLOG.ProductId  as 'ngay', SUM(SoLuongXuat) as 'soLuongXuat' , SUM(SoLuongXuat * Gia) as 'doanhThu' from INVENTORYLOG
+join GHE on GHE.ProductId = INVENTORYLOG.ProductId
+where MONTH(IEDate) = 5 and soLuongXuat > 0
+GROUP by INVENTORYLOG.ProductId 
+ORDER by soLuongXuat asc
+
+
+select * from INVENTORYLOG
+
+
+Create table baoCao1(
+    ProductId int not null foreign key references GHE(ProductId) ,
+    NgayXuat Date ,
+    SoluongXuat int ,
+)
+
+Select baoCao1.ProductId  as 'ngay', SUM(SoLuongXuat) as 'soLuongXuat' , SUM(SoLuongXuat * Gia) as 'doanhThu' from baoCao1
+join GHE on GHE.ProductId = baoCao1.ProductId
+where MONTH(NgayXuat) = MONTH(GETDATE()) and soLuongXuat > 0
+GROUP by baoCao1.ProductId 
+ORDER by soLuongXuat asc
+INSERT INTO baoCao VALUES (1,'08-10-2022',10)
+
+
+Select * from baoCao1
+Update baoCao1 set NgayXuat = '08-10-2022' where SoluongXuat = 30
